@@ -1,5 +1,5 @@
 const express = require('express');
-const { Director } = require('./models/index');
+const { Director, Pelicula } = require('./models/index');
 
 const app = express();
 
@@ -15,7 +15,7 @@ app.post('/director',(req, res) => {
     });
 });
 
-app.get('/all/directors',(req,re) => {
+app.get('/all/directors',(req,res) => {
     Director.find().exec()
         .then((result) => {
             res.send(result);
@@ -44,6 +44,37 @@ app.patch('/director/:id', (req, res) =>  {
         {new: true}).exec()
         .then((result) => {
             res.send(result);
+        }).catch((err) => {
+            res.status(400).send(err);
+        });
+});
+
+app.post('/add/premio/:idDirector', (req, res) => {
+    const id = req.params.idDirector;
+    Director.findByIdAndUpdate(id,
+        { $push: { premios: [req.body.premios] } },
+        {new: true}).exec()
+        .then((result) => {
+            res.status(200).send(result);
+        }).catch((err) => {
+            res.status(409).send(err)
+        });
+});
+
+
+app.post('/pelicula', (req, res) => {
+    const newPelicula = Pelicula(req.body);
+    newPelicula.save((err, pelicula) => {
+        err ? res.status(400).send(err) : res.status(201).send(pelicula);
+    });
+});
+
+app.get('/all/peliculas', (req, res) => {
+    Pelicula.find()
+        .populate('director')
+        .exec()
+        .then((result) => {
+            res.send(result)
         }).catch((err) => {
             res.status(400).send(err);
         });
