@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Director from './Director';
 import axios from 'axios';
+import RegisterDirector from './RegisterDirector';
 
 class Directores extends Component {
 
@@ -31,6 +32,7 @@ class Directores extends Component {
     render(){
         return (
             <section className="row">
+                <RegisterDirector />
                 {this.state.directores}
             </section>
         );
